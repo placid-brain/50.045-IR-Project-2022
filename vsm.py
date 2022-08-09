@@ -1,4 +1,4 @@
-import pandas as pd
+'''import pandas as pd
 import math
 from scipy import spatial
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -86,4 +86,195 @@ for i in range(len(top_5_recipes)):
   print("Steps:")
   for i in df1['steps'][top_5_recipes[i]]:
     print(i.replace("'", ''))
-  print("\n")
+  print("\n")'''
+
+import pandas as pd
+import math
+from scipy import spatial
+from sklearn.feature_extraction.text import TfidfVectorizer
+import pickle
+# ***************************************************************************************************************************************
+# Query
+#query = "aubergine fennel bulb red onion mushrooms olive oil garlic cloves"
+#query = query.lower()
+#q_list = query.split()
+# print (q_list)
+
+# ***************************************************************************************************************************************
+# Read file
+df = pd.read_csv("/Users/placid_brain/Documents/IR stuff/lsa/recipes_w_search_terms.csv",error_bad_lines=False, engine="python", nrows=100)
+
+# ***************************************************************************************************************************************
+# Processing
+def function(ini_list):
+  new_cell = ini_list.strip('][').split(', ')
+  for item in new_cell:
+    item = item.replace("'","")
+  return new_cell
+
+df['ingredients'] = df['ingredients'].apply(function)
+df1 = df[['id', 'name','ingredients','steps']]
+df1.to_pickle("./df1.pkl")  
+# print (df1)
+# print(df1['ingredients'])
+# print ((df1['ingredients'][0]))
+# print ((df1['ingredients'][1]))
+
+# ***************************************************************************************************************************************
+# tf-idf vector for documents
+data = []
+for i in range (len(df1['ingredients'])):
+    ingre_str = ''.join(df1['ingredients'][i])
+    # print (ingre_str)
+    data.append(ingre_str)
+
+# print(data)
+
+tfvec = TfidfVectorizer()
+tdf = tfvec.fit_transform(data)
+tf_idf_docs_matrix = pd.DataFrame(tdf.toarray(), columns = tfvec.get_feature_names())
+print(tfvec.get_feature_names())
+'''term_list = tfvec.get_feature_names()
+with open('list_pickle', 'wb') as fh:
+  pickle.dump(term_list, fh)
+tf_idf_docs_matrix.to_pickle("./tf_idf_docs_matrix.pkl") '''
+# print(tf_idf_docs_matrix)
+
+# get list of tf-idf vectors of recipes
+# print (tf_idf_docs_matrix.values.tolist())
+
+# ***************************************************************************************************************************************
+
+def vector_gen(q_list):
+  # tf-idf vector for query
+  # print(tfvec.get_feature_names())
+
+  query_tfidf_vector = []
+  for i in tfvec.get_feature_names():
+      # print(i)
+      if i not in q_list:
+          query_tfidf_vector.append(0.0)
+      else:
+          # append tf-idf of the term for query
+          # print(i)
+          query_tfidf_vector.append(tfvec.idf_[tfvec.vocabulary_[i]])
+  return query_tfidf_vector
+
+# print (query_tfidf_vector)
+# print(len(query_tfidf_vector))
+
+
+def search(query):
+  query = query.lower()
+  q_list = query.split()
+  query_tfidf_vector = vector_gen(q_list)
+  
+  # similarity - cosine similarity
+  # dict to store cosine similarity between query and documents (key - doc index, value - score)
+  similarity_list = []
+
+  for i in range(len(tf_idf_docs_matrix.values.tolist())):
+      # print(tf_idf_docs_matrix.values.tolist()[i])
+      cosine_similarity = 1 - spatial.distance.cosine(query_tfidf_vector, tf_idf_docs_matrix.values.tolist()[i])
+      similarity_list.append(cosine_similarity)
+
+  # print(similarity_list)
+
+  top_5_recipes = sorted(range(len(similarity_list)), key=lambda i: similarity_list[i], reverse=True)[:5]
+
+  # print(top_5_recipes)
+
+  for i in range(len(top_5_recipes)):
+    # print(top_5_recipes[i])
+    print("{}. {}".format(i+1, df1['name'][top_5_recipes[i]]))
+
+
+
+#search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
+
+#pickle.dump(model, open("model", 'wb'))
+
+
+class VSM:
+  def __init__(self):
+    #super(VSM, self).__init__()
+    #self.query = query
+    #self.search(self.query)
+    #super(VSM, self).__init__()
+    pass
+  def vector_gen(self, q_list):
+    # tf-idf vector for query
+    # print(tfvec.get_feature_names())
+
+    query_tfidf_vector = []
+    for i in tfvec.get_feature_names():
+        # print(i)
+        if i not in q_list:
+            query_tfidf_vector.append(0.0)
+        else:
+            # append tf-idf of the term for query
+            # print(i)
+            query_tfidf_vector.append(tfvec.idf_[tfvec.vocabulary_[i]])
+    return query_tfidf_vector
+
+  def search(self,query):
+    query = query.lower()
+    q_list = query.split()
+    query_tfidf_vector = self.vector_gen(q_list)
+    
+    # similarity - cosine similarity
+    # dict to store cosine similarity between query and documents (key - doc index, value - score)
+    similarity_list = []
+
+    for i in range(len(tf_idf_docs_matrix.values.tolist())):
+        # print(tf_idf_docs_matrix.values.tolist()[i])
+        cosine_similarity = 1 - spatial.distance.cosine(query_tfidf_vector, tf_idf_docs_matrix.values.tolist()[i])
+        similarity_list.append(cosine_similarity)
+
+    # print(similarity_list)
+
+    top_5_recipes = sorted(range(len(similarity_list)), key=lambda i: similarity_list[i], reverse=True)[:5]
+
+    # print(top_5_recipes)
+
+    for i in range(len(top_5_recipes)):
+      # print(top_5_recipes[i])
+      print("{}. {}".format(top_5_recipes[i], df1['name'][top_5_recipes[i]]))
+      print("Steps:")
+      for i in df1['steps'][top_5_recipes[i]]:
+        print(i.replace("'", ''))
+      print("\n")
+
+vsm = VSM()
+vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
+
+#with open('model_pickle_100_latest','wb') as f:
+   # pickle.dump(vsm,f)
+
+'''with open('model_pickle','rb') as f:
+  mp = pickle.load(f)
+
+mp.search("chicken honey")'''
+
+'''if __name__ == '__main__':
+    modelo = VSM()
+    with open('out.pkl', 'wb') as f:
+        pickle.dump(modelo, f)'''
+
+
+
+
+'''class MyCustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if module == "__main__":
+            module = "program"
+        return super().find_class(module, name)
+
+with open('out.pkl', 'rb') as f:
+    unpickler = MyCustomUnpickler(f)
+    obj = unpickler.load()
+
+print(obj)
+print(obj.name)'''
+
+
