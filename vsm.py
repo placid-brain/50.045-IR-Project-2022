@@ -12,7 +12,7 @@ q_list = query.split()
 
 # ***************************************************************************************************************************************
 # Read file
-df = pd.read_csv("recipes_w_search_terms.csv",error_bad_lines=False, engine="python", nrows=1000)
+df = pd.read_csv("recipes_w_search_terms.csv",error_bad_lines=False, engine="python", nrows=100)
 
 # ***************************************************************************************************************************************
 # Processing
@@ -23,11 +23,18 @@ def function(ini_list):
   return new_cell
 
 df['ingredients'] = df['ingredients'].apply(function)
+df['steps'] = df['steps'].apply(function)
 df1 = df[['id', 'name','ingredients','steps']]
 # print (df1)
 # print(df1['ingredients'])
 # print ((df1['ingredients'][0]))
 # print ((df1['ingredients'][1]))
+
+
+# prints out index then prints out list of ingredients
+# for i in range (len(df1['ingredients'])):
+#   print (i)
+#   print (df1['ingredients'][i])
 
 # ***************************************************************************************************************************************
 # tf-idf vector for documents
@@ -82,4 +89,8 @@ top_5_recipes = sorted(range(len(similarity_list)), key=lambda i: similarity_lis
 
 for i in range(len(top_5_recipes)):
   # print(top_5_recipes[i])
-  print("{}. {}".format(i+1, df1['name'][top_5_recipes[i]]))
+  print("{}. {}".format(top_5_recipes[i], df1['name'][top_5_recipes[i]]))
+  print("Steps:")
+  for i in df1['steps'][top_5_recipes[i]]:
+    print(i.replace("'", ''))
+  print("\n")
