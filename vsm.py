@@ -14,7 +14,7 @@ import pickle
 
 # ***************************************************************************************************************************************
 # Read file
-df = pd.read_csv("/Users/placid_brain/Documents/IR stuff/lsa/recipes_w_search_terms.csv",error_bad_lines=False, engine="python", nrows=200)
+df = pd.read_csv("/Users/placid_brain/Documents/IR stuff/lsa/recipes_w_search_terms.csv",error_bad_lines=False, engine="python", nrows=1000)
 
 # ***************************************************************************************************************************************
 # Processing
@@ -27,7 +27,7 @@ def function(ini_list):
 df['ingredients'] = df['ingredients'].apply(function)
 df['steps'] = df['steps'].apply(function)
 df1 = df[['id', 'name','ingredients','steps']]
-df1.to_pickle("./df1_109.pkl")  
+df1.to_pickle("./df1_216.pkl")  
 # print (df1)
 # print(df1['ingredients'])
 # print ((df1['ingredients'][0]))
@@ -166,9 +166,9 @@ class VSM:
 
 
 vsm = VSM()
-vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
+#vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
 
-with open('model_pickle_109','wb') as f:
+with open('model_pickle_216','wb') as f:
   pickle.dump(vsm,f)
 
 
