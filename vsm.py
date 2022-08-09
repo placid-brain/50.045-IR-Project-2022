@@ -29,12 +29,6 @@ df1 = df[['id', 'name','ingredients','steps']]
 # print ((df1['ingredients'][0]))
 # print ((df1['ingredients'][1]))
 
-
-# prints out index then prints out list of ingredients
-# for i in range (len(df1['ingredients'])):
-#   print (i)
-#   print (df1['ingredients'][i])
-
 # ***************************************************************************************************************************************
 # tf-idf vector for documents
 data = []
