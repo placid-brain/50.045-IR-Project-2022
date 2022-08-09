@@ -4,13 +4,7 @@ import pickle
 from scipy import spatial
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
-'''loaded_model = pickle.load(open('pickle file ver_100_3','rb'))
-#sm = VSM()
-#loaded_model.search('chicken honey')
-def main():
-    loaded_model.search('chicken honey')
-if __name__ == '__main__':
-    main()'''
+
 
 df1 = pd.read_pickle("./df1.pkl")
 data = []
@@ -95,4 +89,4 @@ with open('model_pickle_100_latest','rb') as f:
     mp = pickle.load(f)
 
 
-mp.search("potato")
+mp.search("chicken honey")
