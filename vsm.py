@@ -1,5 +1,4 @@
 import pandas as pd
-import math
 from scipy import spatial
 from sklearn.feature_extraction.text import TfidfVectorizer
 
