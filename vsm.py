@@ -238,10 +238,10 @@ class VSM:
     for i in range(len(top_5_recipes)):
       print("{}. {}".format(top_5_recipes[i], df1['name'][top_5_recipes[i]]))
       print("Steps:")
-    for i in df1['steps'][top_5_recipes[i]]:
-      print(i.replace("'", ''))
-    print("\n")
-  
+      for i in df1['steps'][top_5_recipes[i]]:
+        print(i.replace("'", ''))
+      print("\n")
+    
 
 
 
