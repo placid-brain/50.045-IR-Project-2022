@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 
 
-df1 = pd.read_pickle("./df1_216.pkl")
+df1 = pd.read_pickle("./df1_435.pkl")
 data = []
 for i in range (len(df1['ingredients'])):
     ingre_str = ''.join(df1['ingredients'][i])
@@ -64,7 +64,7 @@ class VSM:
         # dict to store cosine similarity between query and documents (key - doc index, value - score)
         similarity_list = []
         final_list=[]
-        final_recipe_list=[]
+        #final_recipe_list=[]
         for i in range(len(tf_idf_docs_matrix.values.tolist())):
             # print(tf_idf_docs_matrix.values.tolist()[i])
             cosine_similarity = 1 - spatial.distance.cosine(query_tfidf_vector, tf_idf_docs_matrix.values.tolist()[i])
@@ -79,12 +79,12 @@ class VSM:
         for i in range(len(top_5_recipes)):
         # print(top_5_recipes[i])
             final_list.append(df1['name'][top_5_recipes[i]])
-            final_recipe_list.append(df1['steps'][top_5_recipes[i]])
+            #final_recipe_list.append(df1['steps'][top_5_recipes[i]])
             print("{}. {}".format(i+1, df1['name'][top_5_recipes[i]]))
 
      
 
-        return (final_list,final_recipe_list)
+        return final_list
     else:
         return ["No matching results found"]
 
@@ -93,7 +93,7 @@ class VSM:
 
 
 
-with open('model_pickle_216','rb') as f:
+with open('model_pickle_435','rb') as f:
     
 
     mp = pickle.load(f)
@@ -108,14 +108,14 @@ x = st.text_input(label="Type in your available ingredients")
 btn = st.button('Get dishes')
 
 if btn:
-    dish = mp.search(x)[0]
-    steps = mp.search(x)[1]
+    dish = mp.search(x)
+    
+    
     if dish[0]=='No matching results found':
+        print('over here')
         st.subheader('No matching results found')
     else:
         for idx in range(len(dish)):
             st.subheader("{}. {}".format(idx+1, dish[idx]))
-            st.caption('Steps:')
-            for item in steps[idx]:
-                st.markdown(item)
+            
     
