@@ -133,7 +133,7 @@ for i in range (len(df1['ingredients'])):
 tfvec = TfidfVectorizer()
 tdf = tfvec.fit_transform(data)
 tf_idf_docs_matrix = pd.DataFrame(tdf.toarray(), columns = tfvec.get_feature_names())
-print(tfvec.get_feature_names())
+
 '''term_list = tfvec.get_feature_names()
 with open('list_pickle', 'wb') as fh:
   pickle.dump(term_list, fh)
@@ -235,15 +235,15 @@ class VSM:
 
     top_5_recipes = sorted(range(len(similarity_list)), key=lambda i: similarity_list[i], reverse=True)[:5]
 
-    # print(top_5_recipes)
-
     for i in range(len(top_5_recipes)):
-      # print(top_5_recipes[i])
       print("{}. {}".format(top_5_recipes[i], df1['name'][top_5_recipes[i]]))
       print("Steps:")
-      for i in df1['steps'][top_5_recipes[i]]:
-        print(i.replace("'", ''))
-      print("\n")
+    for i in df1['steps'][top_5_recipes[i]]:
+      print(i.replace("'", ''))
+    print("\n")
+  
+
+
 
 vsm = VSM()
 vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
@@ -251,30 +251,13 @@ vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
 #with open('model_pickle_100_latest','wb') as f:
    # pickle.dump(vsm,f)
 
-'''with open('model_pickle','rb') as f:
-  mp = pickle.load(f)
-
-mp.search("chicken honey")'''
-
-'''if __name__ == '__main__':
-    modelo = VSM()
-    with open('out.pkl', 'wb') as f:
-        pickle.dump(modelo, f)'''
 
 
 
 
-'''class MyCustomUnpickler(pickle.Unpickler):
-    def find_class(self, module, name):
-        if module == "__main__":
-            module = "program"
-        return super().find_class(module, name)
 
-with open('out.pkl', 'rb') as f:
-    unpickler = MyCustomUnpickler(f)
-    obj = unpickler.load()
 
-print(obj)
-print(obj.name)'''
+
+
 
 
