@@ -4,9 +4,13 @@ import pickle
 from scipy import spatial
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
-
-df1 = pd.read_pickle("./df1_435.pkl")
+df1 = pd.read_pickle("./df1_926.pkl")
 data = []
 for i in range (len(df1['ingredients'])):
     ingre_str = ''.join(df1['ingredients'][i])
@@ -45,8 +49,16 @@ class VSM:
     return query_tfidf_vector
 
   def search(self,query):
+      
     query = query.lower()
-    q_list = query.split()
+    sw = set(stopwords.words('english'))
+    query_tokens = word_tokenize(query)
+    q_list = []
+
+    for w in query_tokens:
+        if w not in sw:
+            q_list.append(w)
+    #query_tfidf_vector = vector_gen(q_list)
     if set(q_list).issubset(set(tfvec.get_feature_names()))== True:
         query_tfidf_vector = self.vector_gen(q_list)
         '''query_tfidf_vector = []
@@ -93,7 +105,7 @@ class VSM:
 
 
 
-with open('model_pickle_435','rb') as f:
+with open('model_pickle_926','rb') as f:
     
 
     mp = pickle.load(f)

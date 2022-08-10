@@ -5,6 +5,12 @@ import math
 from scipy import spatial
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
 # ***************************************************************************************************************************************
 # Query
 #query = "aubergine fennel bulb red onion mushrooms olive oil garlic cloves"
@@ -27,7 +33,7 @@ def function(ini_list):
 df['ingredients'] = df['ingredients'].apply(function)
 df['steps'] = df['steps'].apply(function)
 df1 = df[['id', 'name','ingredients','steps']]
-df1.to_pickle("./df1_435.pkl")  
+df1.to_pickle("./df1_926.pkl")  
 # print (df1)
 # print(df1['ingredients'])
 # print ((df1['ingredients'][0]))
@@ -81,9 +87,22 @@ def vector_gen(q_list):
 
 
 def search(query):
+  sw = set(stopwords.words('english'))
+  
+  
   query = query.lower()
-  q_list = query.split()
+  
+  
+
+  
+  query_tokens = word_tokenize(query)
+  q_list = []
+
+  for w in query_tokens:
+      if w not in sw:
+          q_list.append(w)
   query_tfidf_vector = vector_gen(q_list)
+
   
   # similarity - cosine similarity
   # dict to store cosine similarity between query and documents (key - doc index, value - score)
@@ -166,9 +185,9 @@ class VSM:
 
 
 vsm = VSM()
-#vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
+vsm.search('aubergine fennel bulb red onion mushrooms olive oil garlic cloves')
 
-with open('model_pickle_435','wb') as f:
+with open('model_pickle_926','wb') as f:
   pickle.dump(vsm,f)
 
 
